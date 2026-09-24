@@ -75,5 +75,14 @@ pipeline {
                 }
             }
         }
+
+        stage('Deployment Approval') {
+            steps {
+                input(
+                    message: 'Approve deployment to the target server?',
+                    ok: 'Approve and Deploy'
+                )
+            }
+        }
     }
 }
