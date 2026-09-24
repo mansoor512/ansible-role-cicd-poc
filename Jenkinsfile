@@ -84,5 +84,29 @@ pipeline {
                 )
             }
         }
+
+        stage('Deployment') {
+            steps {
+                withCredentials([
+                    usernamePassword(
+                        credentialsId: 'aws-ansible-credentials',
+                        usernameVariable: 'AWS_ACCESS_KEY_ID',
+                        passwordVariable: 'AWS_SECRET_ACCESS_KEY'
+                    ),
+                    sshUserPrivateKey(
+                        credentialsId: 'ansible-ec2-ssh',
+                        keyFileVariable: 'SSH_KEY',
+                        usernameVariable: 'SSH_USER'
+                    )
+                ]) {
+                    sh '''
+                        .venv/bin/ansible-playbook \
+                        -i aws_ec2.yml \
+                        playbook.yml \
+                        -e "ansible_user=$SSH_USER ansible_ssh_private_key_file=$SSH_KEY"
+                    '''
+                }
+            }
+        }
     }
 }
