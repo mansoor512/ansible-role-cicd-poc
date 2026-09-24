@@ -1,6 +1,10 @@
 pipeline {
     agent any
 
+    environment {
+        AWS_DEFAULT_REGION = 'ap-south-1'
+    }
+
     stages {
 
         stage('Checkout') {
@@ -30,23 +34,39 @@ pipeline {
 
         stage('Syntax Check') {
             steps {
-                sh '''
-                    .venv/bin/ansible-playbook \
-                    -i aws_ec2.yml \
-                    playbook.yml \
-                    --syntax-check
-                '''
+                withCredentials([
+                    usernamePassword(
+                        credentialsId: 'aws-ansible-credentials',
+                        usernameVariable: 'AWS_ACCESS_KEY_ID',
+                        passwordVariable: 'AWS_SECRET_ACCESS_KEY'
+                    )
+                ]) {
+                    sh '''
+                        .venv/bin/ansible-playbook \
+                        -i aws_ec2.yml \
+                        playbook.yml \
+                        --syntax-check
+                    '''
+                }
             }
         }
 
         stage('Check Mode') {
             steps {
-                sh '''
-                    .venv/bin/ansible-playbook \
-                    -i aws_ec2.yml \
-                    playbook.yml \
-                    --check
-                '''
+                withCredentials([
+                    usernamePassword(
+                        credentialsId: 'aws-ansible-credentials',
+                        usernameVariable: 'AWS_ACCESS_KEY_ID',
+                        passwordVariable: 'AWS_SECRET_ACCESS_KEY'
+                    )
+                ]) {
+                    sh '''
+                        .venv/bin/ansible-playbook \
+                        -i aws_ec2.yml \
+                        playbook.yml \
+                        --check
+                    '''
+                }
             }
         }
     }
