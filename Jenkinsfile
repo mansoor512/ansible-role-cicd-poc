@@ -108,5 +108,31 @@ pipeline {
                 }
             }
         }
+
+        stage('Deployment Verification') {
+            steps {
+                withCredentials([
+                    usernamePassword(
+                        credentialsId: 'aws-ansible-credentials',
+                        usernameVariable: 'AWS_ACCESS_KEY_ID',
+                        passwordVariable: 'AWS_SECRET_ACCESS_KEY'
+                    ),
+                    sshUserPrivateKey(
+                        credentialsId: 'ansible-ec2-ssh',
+                        keyFileVariable: 'SSH_KEY',
+                        usernameVariable: 'SSH_USER'
+                    )
+                ]) {
+                    sh '''
+                        .venv/bin/ansible \
+                        -i aws_ec2.yml \
+                        aws_ec2 \
+                        -m ansible.builtin.uri \
+                        -a "url=http://127.0.0.1 return_content=false status_code=200" \
+                        -e "ansible_user=$SSH_USER ansible_ssh_private_key_file=$SSH_KEY"
+                    '''
+                }
+            }
+        }
     }
 }
