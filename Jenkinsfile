@@ -60,12 +60,14 @@ pipeline {
                         passwordVariable: 'AWS_SECRET_ACCESS_KEY'
                     )
                 ]) {
-                    sh '''
-                        .venv/bin/ansible-playbook \
-                        -i aws_ec2.yml \
-                        playbook.yml \
-                        --check
-                    '''
+                    sshagent(credentials: ['ansible-ec2-ssh']) {
+                        sh '''
+                            .venv/bin/ansible-playbook \
+                            -i aws_ec2.yml \
+                            playbook.yml \
+                            --check
+                        '''
+                    }
                 }
             }
         }
