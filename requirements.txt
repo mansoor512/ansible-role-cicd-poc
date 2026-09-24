@@ -1,0 +1,4 @@
+ansible-core==2.16.19
+ansible-lint==26.9.0
+boto3
+botocore

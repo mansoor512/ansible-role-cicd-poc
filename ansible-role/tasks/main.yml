@@ -1,0 +1,28 @@
+---
+- name: Install Nginx
+  ansible.builtin.apt:
+    name: nginx
+    state: present
+    update_cache: true
+
+- name: Deploy HTML template
+  ansible.builtin.template:
+    src: index.html.j2
+    dest: /var/www/html/index.html
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: Deploy CSS file
+  ansible.builtin.copy:
+    src: style.css
+    dest: /var/www/html/style.css
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: Ensure Nginx is running
+  ansible.builtin.service:
+    name: nginx
+    state: started
+    enabled: true

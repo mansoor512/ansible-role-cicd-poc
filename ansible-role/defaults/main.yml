@@ -1,0 +1,4 @@
+---
+app_name: "Ansible Role Demo"
+app_environment: "POC Environment"
+app_message: "This page is deployed using Ansible."

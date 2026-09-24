@@ -1,0 +1,9 @@
+---
+exclude_paths:
+  - .cache/
+  - .venv/
+  - ansible-role/tests/
+  - aws/
+
+skip_list:
+  - role-name

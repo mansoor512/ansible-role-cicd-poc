@@ -1,0 +1,7 @@
+---
+- name: Apply Ansible Role
+  hosts: aws_ec2
+  become: true
+
+  roles:
+    - ansible-role
